@@ -1,25 +1,75 @@
-import logo from './logo.svg';
-import './App.css';
+// ============================================================
+// App.js — Admin panel root with routing and auth guard
+// Updated: Added Settings page route
+// ============================================================
 
-function App() {
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { supabase } from './supabaseClient';
+import './index.css';
+
+import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import CategoriesPage from './pages/CategoriesPage';
+import DisputesPage from './pages/DisputesPage';
+import UsersPage from './pages/UsersPage';
+import WalletPage from './pages/WalletPage';
+import SettingsPage from './pages/SettingsPage';
+import Sidebar from './components/Sidebar';
+
+function AdminLayout({ children }) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="admin-layout">
+      <Sidebar />
+      <div className="main-content">{children}</div>
     </div>
   );
 }
 
-export default App;
+function ProtectedRoute({ session, children }) {
+  if (!session) return <Navigate to="/login" replace />;
+  return <AdminLayout>{children}</AdminLayout>;
+}
+
+export default function App() {
+  const [session, setSession] = useState(undefined);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => setSession(session ?? null)
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (session === undefined) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex',
+        alignItems: 'center', justifyContent: 'center',
+        background: '#3D1F2D', color: '#fff', fontSize: 16,
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={session ? <Navigate to="/" replace /> : <LoginPage />} />
+        <Route path="/" element={<ProtectedRoute session={session}><Dashboard /></ProtectedRoute>} />
+        <Route path="/categories" element={<ProtectedRoute session={session}><CategoriesPage /></ProtectedRoute>} />
+        <Route path="/disputes" element={<ProtectedRoute session={session}><DisputesPage /></ProtectedRoute>} />
+        <Route path="/users" element={<ProtectedRoute session={session}><UsersPage /></ProtectedRoute>} />
+        <Route path="/wallet" element={<ProtectedRoute session={session}><WalletPage /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute session={session}><SettingsPage /></ProtectedRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
