@@ -74,22 +74,24 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 14,
-            background: '#3D1F2D', display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 12px', fontSize: 24,
-          }}>
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 14,
+              background: '#3D1F2D',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 12px',
+              fontSize: 24,
+            }}
+          >
             🛡️
           </div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>
-            Admin Login
-          </h1>
-          <p style={{ color: '#888', fontSize: 14 }}>
-            HelpingHandsAu admin portal
-          </p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Admin Login</h1>
+          <p style={{ color: '#888', fontSize: 14 }}>HelpingHandsAu admin portal</p>
         </div>
 
         {error && (

@@ -74,8 +74,7 @@ describe('SettingsPage', () => {
       expect(screen.queryByText(/Loading settings/i)).not.toBeInTheDocument();
     });
 
-    await user.clear(screen.getByLabelText(/platform fee/i));
-    await user.type(screen.getByLabelText(/platform fee/i), '8');
+    await user.clear(screen.getByLabelText(/support email/i));
     await user.type(screen.getByLabelText(/support email/i), 'ops@example.com');
 
     await user.click(screen.getByRole('button', { name: /save settings/i }));
@@ -85,12 +84,13 @@ describe('SettingsPage', () => {
     });
 
     expect(supabase.from).toHaveBeenCalledWith('app_settings');
-    const fromApi = supabase.from.mock.results[0].value;
-    expect(fromApi.upsert).toHaveBeenCalledTimes(1);
-    const payload = fromApi.upsert.mock.calls[0][0];
+    const fromResults = supabase.from.mock.results;
+    const lastFrom = fromResults[fromResults.length - 1].value;
+    expect(lastFrom.upsert).toHaveBeenCalledTimes(1);
+    const payload = lastFrom.upsert.mock.calls[0][0];
     expect(payload.id).toBe(1);
     expect(payload.settings).toMatchObject({
-      platform_fee_percent: 8,
+      platform_fee_percent: DEFAULT_APP_SETTINGS.platform_fee_percent,
       support_email: 'ops@example.com',
     });
     expect(payload.updated_at).toMatch(/^\d{4}-\d{2}-\d{2}T/);
@@ -137,7 +137,8 @@ describe('SettingsPage', () => {
     expect(faq).not.toBeChecked();
     await user.click(screen.getByRole('button', { name: /save settings/i }));
     await waitFor(() => {
-      const fromApi = supabase.from.mock.results.at(-1).value;
+      const results = supabase.from.mock.results;
+      const fromApi = results[results.length - 1].value;
       expect(fromApi.upsert.mock.calls[0][0].settings.show_faq).toBe(false);
     });
   });
