@@ -1,19 +1,17 @@
-// ============================================================
-// Sidebar.js — Admin panel navigation sidebar
-// Updated: Added Settings nav item
-// ============================================================
-
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
 const NAV_ITEMS = [
-  { path: '/',           icon: '📊', label: 'Dashboard'  },
-  { path: '/categories', icon: '🏷️', label: 'Categories' },
-  { path: '/disputes',   icon: '⚠️', label: 'Disputes'   },
-  { path: '/users',      icon: '👥', label: 'Users'      },
-  { path: '/wallet',     icon: '💰', label: 'Wallet'     },
-  { path: '/settings',   icon: '⚙️', label: 'Settings'   },
+  { path: '/', label: 'Dashboard', icon: '📊' },
+  { path: '/disputes', label: 'Disputes', icon: '⚠️' },
+  { path: '/notifications', label: 'Notifications', icon: '🔔' },
+  { path: '/tasks', label: 'Tasks', icon: '📋' },
+  { path: '/users', label: 'Users', icon: '👥' },
+  { path: '/financial', label: 'Financial', icon: '💰' },
+  { path: '/analytics', label: 'Analytics', icon: '📈' },
+  { path: '/categories', label: 'Categories', icon: '🏷️' },
+  { path: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
 export default function Sidebar() {
@@ -32,7 +30,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {NAV_ITEMS.map(item => (
+        {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
@@ -46,7 +44,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <button className="logout-btn" onClick={handleLogout}>
+        <button type="button" className="logout-btn" onClick={handleLogout}>
           🚪 Log out
         </button>
       </div>
